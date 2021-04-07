@@ -23,5 +23,11 @@ namespace ConsoleClient.Contract
         // 客户端 暂时不要写Task
         //Task<string> SayHi(string name);
         string SayHi(string name);
+
+
+        string GoodBye(string name);
+
+        [AnnoProxy(Method = "GoodBye")]
+        string GoodByeAlias(string name);
     }
 }

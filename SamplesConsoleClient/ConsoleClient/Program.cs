@@ -12,11 +12,15 @@ namespace ConsoleClient
             Console.Title = "模拟控制台客户端";
             Init();
             var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();
-            for (int i = 0; i < 10; i++)
-            {
-                var rlt = helloAnnoService.SayHi($"jack ma--[{i}]");
-                Console.WriteLine(rlt);
-            }
+            var sayHi = helloAnnoService.SayHi($"jack ma--[SayHi]");
+            Console.WriteLine(sayHi);
+
+            var goodBye = helloAnnoService.GoodBye($"jack ma--[GoodBye]");
+            Console.WriteLine(goodBye);
+
+            var goodByeAlias = helloAnnoService.GoodByeAlias($"jack ma--[GoodByeAlias]");
+            Console.WriteLine(goodByeAlias);
+            Console.WriteLine("调用完成");
             Console.ReadLine();
         }
         /// <summary>

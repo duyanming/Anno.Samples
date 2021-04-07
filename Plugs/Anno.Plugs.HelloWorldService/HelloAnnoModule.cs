@@ -15,8 +15,12 @@ namespace Anno.Plugs.HelloWorldService
 
         public Task<string> SayHi(string name)
         {
-
             return Task.FromResult($"{name} 你好，我是Anno.");
+        }
+
+        public Task<string> GoodBye(string name)
+        {
+            return Task.FromResult($"{name} 再见，有缘再会.");
         }
     }
 }
