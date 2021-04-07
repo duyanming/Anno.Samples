@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace Anno.Plugs.HelloWorldService
 {
-    public class HelloAnnoModule
+    using Anno.EngineData;
+    public class HelloAnnoModule:BaseModule
     {
         public HelloAnnoModule()
         {
