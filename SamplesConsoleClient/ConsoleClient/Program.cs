@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Anno.Rpc.Client;
 using Anno.Rpc.Client.DynamicProxy;
 using ConsoleClient.Contract;
@@ -7,13 +8,17 @@ namespace ConsoleClient
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.Title = "模拟控制台客户端";
             Init();
             var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();
             var sayHi = helloAnnoService.SayHi($"jack ma--[SayHi]");
             Console.WriteLine(sayHi);
+
+
+            var taskSayHi = await helloAnnoService.TaskSayHi($"jack ma--[TaskSayHi]");
+            Console.WriteLine(taskSayHi);
 
             var goodBye = helloAnnoService.GoodBye($"jack ma--[GoodBye]");
             Console.WriteLine(goodBye);

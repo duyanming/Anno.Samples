@@ -19,10 +19,10 @@ namespace ConsoleClient.Contract
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        //[AnnoProxy(Method = "SayHi")]
-        // 客户端 暂时不要写Task
-        //Task<string> SayHi(string name);
         string SayHi(string name);
+
+        [AnnoProxy(Method = "SayHi")]
+        Task<string> TaskSayHi(string name);
 
 
         string GoodBye(string name);
