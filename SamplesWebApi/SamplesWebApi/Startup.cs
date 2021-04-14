@@ -41,7 +41,24 @@ namespace SamplesWebApi
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SamplesWebApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "SamplesWebApi",
+                    Version = "v1",
+                    Contact = new OpenApiContact()
+                    {
+                        Name = "Anno&Viper",
+                        Email = "dym880@163.com",
+                        Url = new Uri("https://github.com/duyanming")
+                    },
+                    Description = "Anno&Viper ¶Ô½Óasp.net core WebApi",
+                    License = new OpenApiLicense()
+                    {
+                        Name = "MIT",
+                        Url=new Uri("https://github.com/duyanming/Viper/blob/master/LICENSE")
+                    }
+                }
+                );
             });
         }
 
@@ -52,7 +69,10 @@ namespace SamplesWebApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SamplesWebApi v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SamplesWebApi v1");
+                });
             }
 
             DefaultConfigManager
