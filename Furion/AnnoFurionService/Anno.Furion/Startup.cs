@@ -1,12 +1,11 @@
+using Anno.Rpc.Client;
+using Anno.Rpc.Client.DynamicProxy;
+using Furion.Application.AnnoContract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Furion.Application.AnnoContract;
-using Anno.Rpc.Client.DynamicProxy;
-using Anno.Rpc.Client;
 
 namespace Anno.Furion
 {
@@ -28,10 +27,8 @@ namespace Anno.Furion
             services.AddSingleton(_annoConfig);
             #endregion
 
-            services
-                .AddControllers()
-                .AddInject()
-                .AddDynamicApiControllers();  // 添加 AddInject();
+            services.AddControllers()
+                    .AddInject();
 
             //Anno动态接口
             var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();

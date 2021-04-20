@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 namespace Furion.Application
 {
     public class FurionAppService : IDynamicApiController
-    {       
+    {
         private readonly IHelloAnnoService _helloAnnoService;
 
-        public FurionAppService( IHelloAnnoService helloAnnoService)
+        public FurionAppService(IHelloAnnoService helloAnnoService)
         {
             _helloAnnoService = helloAnnoService;
         }
