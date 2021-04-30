@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Anno.Rpc.Client.DynamicProxy" Version="1.1.5" />
-    <PackageReference Include="Furion" Version="2.0.7" />
+    <PackageReference Include="Anno.Rpc.Client.DynamicProxy" Version="1.1.6" />
+    <PackageReference Include="Furion" Version="2.2.1" />
   </ItemGroup>
 
 </Project>

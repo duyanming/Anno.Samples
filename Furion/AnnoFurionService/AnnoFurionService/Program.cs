@@ -2,6 +2,8 @@
 using System.Linq;
 using Anno.Loader;
 using Anno.Log;
+
+//using Microsoft.Extensions.DependencyInjection;
 using Autofac;
 
 namespace AnnoFurionService
@@ -32,6 +34,9 @@ namespace AnnoFurionService
 
                 var services = IocLoader.GetAutoFacContainerBuilder();
                 services.RegisterType(typeof(RpcConnectorImpl)).As(typeof(IRpcConnector)).SingleInstance();
+
+                //var services = IocLoader.GetServiceDescriptors();
+                //services.AddSingleton(typeof(IRpcConnector), typeof(RpcConnectorImpl));
             }
             , ()=> {
                 Bootstrap.ApiDoc();

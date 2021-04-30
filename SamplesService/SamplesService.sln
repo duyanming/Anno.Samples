@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplesService", "SamplesService\SamplesService.csproj", "{3C59CCA5-FB51-4625-B842-4F26E4562CF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamplesService", "SamplesService\SamplesService.csproj", "{3C59CCA5-FB51-4625-B842-4F26E4562CF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anno.Plugs.HelloWorldService", "..\Plugs\Anno.Plugs.HelloWorldService\Anno.Plugs.HelloWorldService.csproj", "{6B0043CF-7000-4461-827E-7A3DA17194A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anno.Plugs.HelloWorldService", "..\Plugs\Anno.Plugs.HelloWorldService\Anno.Plugs.HelloWorldService.csproj", "{6B0043CF-7000-4461-827E-7A3DA17194A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamplesCenter", "..\SamplesCenter\SamplesCenter\SamplesCenter.csproj", "{5685E6F8-6AA6-4EF0-A729-C696CB54020A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleClient", "..\SamplesConsoleClient\ConsoleClient\ConsoleClient.csproj", "{E7026184-8CFE-4AB1-A474-5BB3C5B64666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleClient", "..\SamplesConsoleClient\ConsoleClient\ConsoleClient.csproj", "{E7026184-8CFE-4AB1-A474-5BB3C5B64666}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
