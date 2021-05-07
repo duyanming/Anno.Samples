@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugs", "Plugs", "{7805E551
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anno.Plugs.HelloWorldService", "..\Plugs\Anno.Plugs.HelloWorldService\Anno.Plugs.HelloWorldService.csproj", "{093C3A40-F5BE-4C97-BF84-33C2F157AF56}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anno.Plugs.CurrentLimitingService", "..\Plugs\Anno.Plugs.CurrentLimitingService\Anno.Plugs.CurrentLimitingService.csproj", "{A111074D-4FF4-4DE5-A793-8F0E20BC17E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,12 +37,17 @@ Global
 		{093C3A40-F5BE-4C97-BF84-33C2F157AF56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{093C3A40-F5BE-4C97-BF84-33C2F157AF56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{093C3A40-F5BE-4C97-BF84-33C2F157AF56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A111074D-4FF4-4DE5-A793-8F0E20BC17E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A111074D-4FF4-4DE5-A793-8F0E20BC17E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A111074D-4FF4-4DE5-A793-8F0E20BC17E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A111074D-4FF4-4DE5-A793-8F0E20BC17E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{093C3A40-F5BE-4C97-BF84-33C2F157AF56} = {7805E551-3905-4EAC-B976-4F35255DBDA4}
+		{A111074D-4FF4-4DE5-A793-8F0E20BC17E7} = {7805E551-3905-4EAC-B976-4F35255DBDA4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89077E98-FBEF-4B62-91AB-05C27361AE77}

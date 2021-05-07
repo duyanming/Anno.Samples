@@ -36,6 +36,10 @@ namespace SamplesWebApi
             #region 注册接口代理
             var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();
             services.AddSingleton(helloAnnoService);
+
+
+            var currentLimitingService = AnnoProxyBuilder.GetService<ICurrentLimitingService>();
+            services.AddSingleton(currentLimitingService);
             #endregion
 
             services.AddControllers();

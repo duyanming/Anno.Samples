@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Plugs\Anno.Plugs.CurrentLimitingService\Anno.Plugs.CurrentLimitingService.csproj" />
     <ProjectReference Include="..\..\Plugs\Anno.Plugs.HelloWorldService\Anno.Plugs.HelloWorldService.csproj" />
   </ItemGroup>
 
