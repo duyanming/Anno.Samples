@@ -12,10 +12,12 @@ namespace Furion.Application
         {
             _helloAnnoService = helloAnnoService;
         }
+
         public string Get()
         {
             return $"Hello {nameof(Furion)}";
         }
+
         /// <summary>
         /// 说问候，你好啊 SayHi
         /// </summary>
@@ -25,6 +27,7 @@ namespace Furion.Application
         {
             return _helloAnnoService.SayHi(name);
         }
+
         /// <summary>
         /// 异步 说问候，你好啊 TaskSayHi
         /// </summary>
@@ -34,6 +37,7 @@ namespace Furion.Application
         {
             return await _helloAnnoService.TaskSayHi(name);
         }
+
         /// <summary>
         /// 说再见 GoodBye
         /// </summary>

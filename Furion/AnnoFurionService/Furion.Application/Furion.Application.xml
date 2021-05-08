@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Furion.Application</name>
+    </assembly>
+    <members>
+        <member name="T:Furion.Application.AnnoContract.ICurrentLimitingService">
+            <summary>
+            对应Anno.Plugs.HelloWorldService 插件的 HelloAnnoModule 模块
+            接口名称和接口方法和 AnnoService端的 名称不一样的时候使用AnnoProxy 指定别名
+            </summary>
+        </member>
+        <member name="M:Furion.Application.AnnoContract.ICurrentLimitingService.SayHi_TokenBucket_Action(System.String)">
+            <summary>
+            和方法名称一致合一不用写注解
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.AnnoContract.ICurrentLimitingService.SayHi_Module(System.String)">
+            <summary>
+            和方法名称一致合一不用写注解
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.AnnoContract.ICurrentLimitingService.SayHi_Global(System.String)">
+            <summary>
+            和方法名称一致合一不用写注解
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Furion.Application.AnnoContract.IHelloAnnoService">
+            <summary>
+            对应Anno.Plugs.HelloWorldService 插件的 HelloAnnoModule 模块
+            接口名称和接口方法和 AnnoService端的 名称不一样的时候使用AnnoProxy 指定别名
+            </summary>
+        </member>
+        <member name="M:Furion.Application.AnnoContract.IHelloAnnoService.SayHi(System.String)">
+            <summary>
+            和方法名称一致合一不用写注解
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.FurionAppService.SayHi(System.String)">
+            <summary>
+            说问候，你好啊 SayHi
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.FurionAppService.TaskSayHi(System.String)">
+            <summary>
+            异步 说问候，你好啊 TaskSayHi
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.FurionAppService.GoodBye(System.String)">
+            <summary>
+            说再见 GoodBye
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.FurionAppService.GoodByeAlias(System.String)">
+            <summary>
+            说再见 别名 GoodByeAlias
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

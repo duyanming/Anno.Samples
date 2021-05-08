@@ -1,14 +1,9 @@
 ﻿using Furion.Application.AnnoContract;
 using Furion.DynamicApiController;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Furion.Application
 {
-    public class CurrentLimitingService : IDynamicApiController,ICurrentLimitingService
+    public class CurrentLimitingService : IDynamicApiController, ICurrentLimitingService
     {
         private readonly ICurrentLimitingService _currentLimitingService;
 
