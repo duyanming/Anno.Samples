@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Anno.Rpc.Client.DynamicProxy" Version="1.1.6" />
-    <PackageReference Include="Furion" Version="2.3.6" />
+    <PackageReference Include="Furion" Version="2.4.5" />
   </ItemGroup>
 
 </Project>
