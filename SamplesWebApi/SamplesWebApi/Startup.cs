@@ -79,11 +79,13 @@ namespace SamplesWebApi
                 });
             }
 
+            #region Anno≈‰÷√÷––ƒ…Ë÷√
             DefaultConfigManager
-                .SetDefaultConfiguration(_annoConfig.AppName
-                    , _annoConfig.IpAddress
-                    , _annoConfig.Port
-                    , _annoConfig.TraceOnOff);
+                  .SetDefaultConfiguration(_annoConfig.AppName
+                      , _annoConfig.IpAddress
+                      , _annoConfig.Port
+                      , _annoConfig.TraceOnOff); 
+            #endregion
 
             app.UseRouting();
 
