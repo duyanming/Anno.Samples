@@ -1,0 +1,2 @@
+cd ..
+SamplesWinService.exe uninstall
