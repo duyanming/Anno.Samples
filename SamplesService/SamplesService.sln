@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamplesCenter", "..\Samples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleClient", "..\SamplesConsoleClient\ConsoleClient\ConsoleClient.csproj", "{E7026184-8CFE-4AB1-A474-5BB3C5B64666}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplesWinService", "SamplesWinService\SamplesWinService.csproj", "{A022ED76-4CE0-4DC1-B8A7-5E61D59A8A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamplesWinService", "SamplesWinService\SamplesWinService.csproj", "{A022ED76-4CE0-4DC1-B8A7-5E61D59A8A8B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anno.Plugs.CurrentLimitingService", "..\Plugs\Anno.Plugs.CurrentLimitingService\Anno.Plugs.CurrentLimitingService.csproj", "{6BBD879B-B2F5-444E-BE4D-D598067254AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{A022ED76-4CE0-4DC1-B8A7-5E61D59A8A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A022ED76-4CE0-4DC1-B8A7-5E61D59A8A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A022ED76-4CE0-4DC1-B8A7-5E61D59A8A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BBD879B-B2F5-444E-BE4D-D598067254AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BBD879B-B2F5-444E-BE4D-D598067254AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BBD879B-B2F5-444E-BE4D-D598067254AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BBD879B-B2F5-444E-BE4D-D598067254AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
