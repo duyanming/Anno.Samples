@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Furion" Version="2.11.1" />
+    <PackageReference Include="Furion" Version="2.12.2" />
   </ItemGroup>
 
   <ItemGroup>
