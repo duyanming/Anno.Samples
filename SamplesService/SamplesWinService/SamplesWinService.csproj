@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Anno.Rpc.Server" Version="1.0.3.6" />
+    <PackageReference Include="Anno.Rpc.Server" Version="1.5.0.1" />
     <PackageReference Include="Topshelf" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Plugs\Anno.Plugs.CurrentLimitingService\Anno.Plugs.CurrentLimitingService.csproj" />
+    <ProjectReference Include="..\..\Plugs\Anno.Plugs.HelloWorldService\Anno.Plugs.HelloWorldService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -16,8 +16,8 @@ namespace ConsoleClient
             Console.Title = "模拟控制台客户端";
             Init();
 
-            //await ProxyTest();
-            FromBodyTest();
+            await ProxyTest();
+            //FromBodyTest();
 
             await Task.CompletedTask;
             Console.WriteLine("调用完成");
@@ -35,19 +35,27 @@ namespace ConsoleClient
 
         static async Task ProxyTest()
         {
+            var loop = 0;
+        start:
             var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();
-            var sayHi = helloAnnoService.SayHi($"jack ma--[SayHi]");
-            Console.WriteLine(sayHi);
+            for (int i = 0; i < 100; i++)
+            {
+                var sayHi = helloAnnoService.SayHi($"jack ma--[SayHi]-{i}");
+                //Console.WriteLine(sayHi);
 
+                var taskSayHi = await helloAnnoService.TaskSayHi($"jack ma--[TaskSayHi]-{i}");
+                //Console.WriteLine(taskSayHi);
 
-            var taskSayHi = await helloAnnoService.TaskSayHi($"jack ma--[TaskSayHi]");
-            Console.WriteLine(taskSayHi);
+                var goodBye = helloAnnoService.GoodBye($"jack ma--[GoodBye]-{i}");
+                //Console.WriteLine(goodBye);
 
-            var goodBye = helloAnnoService.GoodBye($"jack ma--[GoodBye]");
-            Console.WriteLine(goodBye);
+                var goodByeAlias = helloAnnoService.GoodByeAlias($"jack ma--[GoodByeAlias]-{i}");
+                //Console.WriteLine(goodByeAlias);
 
-            var goodByeAlias = helloAnnoService.GoodByeAlias($"jack ma--[GoodByeAlias]");
-            Console.WriteLine(goodByeAlias);
+            }
+            Console.WriteLine($"[{DateTime.Now:yyyyy-MM-dd HH:mm:ss}] Loop:{++loop}");
+            await Task.Delay(200);
+            goto start;
         }
 
         static void FromBodyTest()
@@ -89,8 +97,8 @@ namespace ConsoleClient
                             var valueStr = input[key];
                             try
                             {
-                                if (propertyInfo.PropertyType.IsPrimitive || 
-                                    (propertyInfo.PropertyType.FullName.StartsWith("System.")&&!propertyInfo.PropertyType.FullName.StartsWith("System.Collections.Generic")))
+                                if (propertyInfo.PropertyType.IsPrimitive ||
+                                    (propertyInfo.PropertyType.FullName.StartsWith("System.") && !propertyInfo.PropertyType.FullName.StartsWith("System.Collections.Generic")))
                                 {
                                     var value = Convert.ChangeType(valueStr, propertyInfo.PropertyType);
                                     propertyInfo.SetValue(body, value, null);

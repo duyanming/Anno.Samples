@@ -15,8 +15,8 @@ namespace Anno.Plugs.CurrentLimitingService
         public void ConfigurationBootstrap()
         { 
             //全局限流
-            var globalRateLimit = new RateLimit(LimitingType.TokenBucket, 1, 3, 3);
-            EngineData.Routing.Routing.AddFilter(globalRateLimit);
+            //var globalRateLimit = new RateLimit(LimitingType.TokenBucket, 1, 3, 3);
+            //EngineData.Routing.Routing.AddFilter(globalRateLimit);
         }
         /// <summary>
         /// Ioc 容器构建前
