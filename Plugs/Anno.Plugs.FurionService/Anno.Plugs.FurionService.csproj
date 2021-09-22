@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Anno.EngineData" Version="1.6.0.2" />
+    <PackageReference Include="Furion.Extras.DatabaseAccessor.SqlSugar" Version="2.18.7" />
+  </ItemGroup>
+</Project>

@@ -36,6 +36,9 @@ namespace Anno.Furion
 
             var currentLimitingService = AnnoProxyBuilder.GetService<ICurrentLimitingService>();
             services.AddSingleton(currentLimitingService);
+
+            var productAnnoService = AnnoProxyBuilder.GetService<IProductAnnoService>();
+            services.AddSingleton(productAnnoService);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

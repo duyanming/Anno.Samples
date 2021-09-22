@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31129.286
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnnoFurionService", "AnnoFurionService\AnnoFurionService.csproj", "{5D6000E0-077B-43A6-9DBB-1235B8718FF4}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Anno", "Anno", "{E84146B5-8B6F-41D4-92EA-4551ECC091B2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anno.Plugs.CurrentLimitingService", "..\..\Plugs\Anno.Plugs.CurrentLimitingService\Anno.Plugs.CurrentLimitingService.csproj", "{9FE4D399-E387-42BC-8A79-141509D18528}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anno.Plugs.FurionService", "..\..\Plugs\Anno.Plugs.FurionService\Anno.Plugs.FurionService.csproj", "{B0E1F464-A2F9-4522-BC8C-EC581CB08C2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{9FE4D399-E387-42BC-8A79-141509D18528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FE4D399-E387-42BC-8A79-141509D18528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FE4D399-E387-42BC-8A79-141509D18528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0E1F464-A2F9-4522-BC8C-EC581CB08C2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0E1F464-A2F9-4522-BC8C-EC581CB08C2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0E1F464-A2F9-4522-BC8C-EC581CB08C2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0E1F464-A2F9-4522-BC8C-EC581CB08C2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{8153B6D2-10B1-4145-9E28-57F36505C8A2} = {A2C1D9C7-0AC3-440A-A885-D7B37B1FBC8B}
 		{20C00F95-8BD6-454C-9A70-04902B90D142} = {E84146B5-8B6F-41D4-92EA-4551ECC091B2}
 		{9FE4D399-E387-42BC-8A79-141509D18528} = {A2C1D9C7-0AC3-440A-A885-D7B37B1FBC8B}
+		{B0E1F464-A2F9-4522-BC8C-EC581CB08C2C} = {A2C1D9C7-0AC3-440A-A885-D7B37B1FBC8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0DE13EDA-D6AB-478B-A37E-AA49BA20AA8D}

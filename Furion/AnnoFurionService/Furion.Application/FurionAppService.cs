@@ -8,9 +8,12 @@ namespace Furion.Application
     {
         private readonly IHelloAnnoService _helloAnnoService;
 
-        public FurionAppService(IHelloAnnoService helloAnnoService)
+        private readonly IProductAnnoService productAnnoService;
+
+        public FurionAppService(IHelloAnnoService helloAnnoService, IProductAnnoService productAnnoService)
         {
             _helloAnnoService = helloAnnoService;
+            this.productAnnoService = productAnnoService;
         }
 
         public string Get()
