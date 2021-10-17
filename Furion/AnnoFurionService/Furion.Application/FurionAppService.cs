@@ -60,5 +60,15 @@ namespace Furion.Application
         {
             return _helloAnnoService.GoodByeAlias(name);
         }
+
+        /// <summary>
+        /// 说再见 别名 ProductSayHi
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string ProductSayHi(string name)
+        {
+            return productAnnoService.SayHi(name).Result;
+        }
     }
 }

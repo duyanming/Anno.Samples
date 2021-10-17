@@ -44,6 +44,12 @@
             <param name="name"></param>
             <returns></returns>
         </member>
+        <member name="T:Furion.Application.AnnoContract.IProductAnnoService">
+            <summary>
+            对应Anno.Plugs.HelloWorldService 插件的 HelloAnnoModule 模块
+            接口名称和接口方法和 AnnoService端的 名称不一样的时候使用AnnoProxy 指定别名
+            </summary>
+        </member>
         <member name="M:Furion.Application.FurionAppService.SayHi(System.String)">
             <summary>
             说问候，你好啊 SayHi
@@ -68,6 +74,13 @@
         <member name="M:Furion.Application.FurionAppService.GoodByeAlias(System.String)">
             <summary>
             说再见 别名 GoodByeAlias
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.Application.FurionAppService.ProductSayHi(System.String)">
+            <summary>
+            说再见 别名 ProductSayHi
             </summary>
             <param name="name"></param>
             <returns></returns>

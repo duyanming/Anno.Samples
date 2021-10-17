@@ -3,8 +3,7 @@ using System.Linq;
 using Anno.Loader;
 using Anno.Log;
 
-//using Microsoft.Extensions.DependencyInjection;
-using Autofac;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AnnoFurionService
 {
@@ -35,16 +34,23 @@ namespace AnnoFurionService
             Bootstrap.StartUp(args, () =>//服务配置文件读取完成后回调(服务未启动)
             {
 
-                var services = IocLoader.GetAutoFacContainerBuilder();
-                services.RegisterType(typeof(RpcConnectorImpl)).As(typeof(IRpcConnector)).SingleInstance();
-                services.RegisterType(typeof(SqlSugarRepository)).As(typeof(ISqlSugarRepository)).SingleInstance();
-                //var services = IocLoader.GetServiceDescriptors();
-                //services.AddSingleton(typeof(IRpcConnector), typeof(RpcConnectorImpl));
+                //var services = IocLoader.GetAutoFacContainerBuilder();
+                //services.RegisterType(typeof(RpcConnectorImpl)).As(typeof(IRpcConnector)).SingleInstance();
+                //services.RegisterType(typeof(SqlSugarRepository)).As(typeof(ISqlSugarRepository)).SingleInstance();
+                var services = IocLoader.GetServiceDescriptors();
+                services.AddSqlSugar(new ConnectionConfig()
+                {
+                    ConnectionString = "server=127.0.0.1;database=viper;uid=bif;pwd=123456;SslMode=None;",
+                    DbType = DbType.MySql,
+                    IsAutoCloseConnection = true,
+                    InitKeyType = InitKeyType.SystemTable
+                });
+                services.AddSingleton(typeof(IRpcConnector), typeof(RpcConnectorImpl));
             }
             , () =>
             {
                 Bootstrap.ApiDoc();
-            });
+            }, IocType.DependencyInjection);
         }
     }
 }
