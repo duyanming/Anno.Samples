@@ -19,38 +19,40 @@ namespace Microsoft.AspNetCore
         {
             bool notLimit = true;
             var Request = context.Request;
-            //var headers = Request.Headers;
-            string userCode = Request.Query["userCode"];
-
-            _rateLimitPool.TryGetValue(userCode, out LimitInfo limitInfo);
-            if (limitInfo == null)
+            if (Request.Query.ContainsKey("userCode"))
             {
-                var limitCfg = selectLimitCfg(userCode);
-                var limitingService = LimitingFactory.Build(TimeSpan.FromSeconds(limitCfg.timeSpan)
-                         , LimitingType.LeakageBucket
-                         , (int)limitCfg.maxQPS
-                         , (int)limitCfg.limitSize);
-                limitInfo = new LimitInfo()
+                //var headers = Request.Headers;
+                string userCode = Request.Query["userCode"];
+
+                _rateLimitPool.TryGetValue(userCode, out LimitInfo limitInfo);
+                if (limitInfo == null)
                 {
-                    Time = DateTime.Now,
-                    limitingService = limitingService
-                };
-                _rateLimitPool.TryAdd(userCode, limitInfo);
+                    var limitCfg = selectLimitCfg(userCode);
+                    var limitingService = LimitingFactory.Build(TimeSpan.FromSeconds(limitCfg.timeSpan)
+                             , LimitingType.LeakageBucket
+                             , (int)limitCfg.maxQPS
+                             , (int)limitCfg.limitSize);
+                    limitInfo = new LimitInfo()
+                    {
+                        Time = DateTime.Now,
+                        limitingService = limitingService
+                    };
+                    _rateLimitPool.TryAdd(userCode, limitInfo);
 
-            }
-            if (limitInfo != null)
-            {
-                //limit.Request() ==true 代表不受限制
-                limitInfo.Time = DateTime.Now;
-                notLimit = limitInfo.limitingService.Request();
-            }
-            if (!notLimit)
-            {
+                }
+                if (limitInfo != null)
+                {
+                    //limit.Request() ==true 代表不受限制
+                    limitInfo.Time = DateTime.Now;
+                    notLimit = limitInfo.limitingService.Request();
+                }
+                if (!notLimit)
+                {
 #if DEBUG
-                Console.WriteLine($"userCode:{userCode},Trigger current limiting.");
+                    Console.WriteLine($"userCode:{userCode},Trigger current limiting.");
 #endif
+                }
             }
-
             return notLimit;
         }
         /// <summary>

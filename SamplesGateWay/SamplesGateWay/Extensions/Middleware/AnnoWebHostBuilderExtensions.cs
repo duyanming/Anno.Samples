@@ -39,7 +39,7 @@ namespace Microsoft.AspNetCore
             {
                 #region 注册路由和限流
                 services.AddSingleton<ISelectRoute, UserCodeSelectRoute>();
-                services.AddSingleton<IRateLimitStrategy, UserCodeRateLimitStrategy>(); 
+                services.AddSingleton<IRateLimitStrategy, UserCodeRateLimitStrategy>();
                 #endregion
 
                 var serviceProvider = services.BuildServiceProvider();
@@ -51,7 +51,7 @@ namespace Microsoft.AspNetCore
                 AnnoGatewayConfig gatewayConfig = new AnnoGatewayConfig();
                 configuration.Bind(gatewayConfig);
                 services.AddSingleton(gatewayConfig);
-                services.AddSingleton<IStartupFilter>(new AnnoSetupFilter(gatewayConfig,rateLimitStrategy,selectRoute));
+                services.AddSingleton<IStartupFilter>(new AnnoSetupFilter(gatewayConfig, rateLimitStrategy, selectRoute));
             });
 
 
@@ -82,28 +82,55 @@ namespace Microsoft.AspNetCore
                 next(app);
             };
         }
-        private Task AnnoApi(HttpContext context)
+        private async Task AnnoApi(HttpContext context)
         {
+            #region 判断是否限流
+            /***
+             * 实现 IRateLimitStrategy 接口的【 bool Request(HttpContext context)】方法
+             * 返回 true 代表不限制     
+             * 参考：UserCodeRateLimitStrategy
+             * 根据用户userCode 限流
+             * zhangsan rps  10  其他人 2， 用户根据需要自定义
+             */
+            if (rateLimitStrategy != null && !rateLimitStrategy.Request(context))
+            {
+                context.Response.StatusCode = 429;
+                Dictionary<string, object> rlt = new Dictionary<string, object>();
+                rlt.Add("status", false);
+                rlt.Add("msg", "Trigger current limiting.");
+                rlt.Add("output", null);
+                rlt.Add("outputData", 429);
+                var rltExec = System.Text.Encoding.UTF8.GetString(rlt.ExecuteResult());
+                await context.Response.WriteAsync(rltExec);
+            }
+            #endregion
+            #region 根据自定义路由策略选择服务
+            /***
+             * 实现 ISelectRoute 接口的 【string SelectRoute(HttpContext context)】方法 
+             * 返回服务昵称
+             * 参考：UserCodeSelectRoute
+             * 据用户get参数city ，选取一个服务昵称中包含city的服务
+             */
+            string nickName = selectRoute.SelectRoute(context);
+            #endregion
             var routeValues = context.Request.RouteValues;
             routeValues.TryGetValue("channel", out object channel);
             routeValues.TryGetValue("router", out object router);
             routeValues.TryGetValue("method", out object method);
             routeValues.TryGetValue("nodeName", out object nodeName);
 
-            return ApiInvoke(context, (input) =>
-            {
-                input[Eng.NAMESPACE] = channel.ToString();
-                input[Eng.CLASS] = router.ToString();
-                input[Eng.METHOD] = method.ToString();
-
-                string nickName = selectRoute.SelectRoute(context);
-                return Connector.BrokerDnsAsync(input, nickName).ConfigureAwait(false).GetAwaiter().GetResult();
-            });
+            await ApiInvoke(context, (input) =>
+           {
+               input[Eng.NAMESPACE] = channel.ToString();
+               input[Eng.CLASS] = router.ToString();
+               input[Eng.METHOD] = method.ToString();
+               return Connector.BrokerDnsAsync(input, nickName).ConfigureAwait(false).GetAwaiter().GetResult();
+           });
         }
 
-        private Task ApiInvoke(HttpContext context, Func<Dictionary<string, string>, string> invoke)
+        private async Task ApiInvoke(HttpContext context, Func<Dictionary<string, string>, string> invoke)
         {
-            context.Response.ContentType = "Content-Type: application/javascript; charset=utf-8";
+            context.Response.ContentType = "application/javascript; charset=utf-8";
             Dictionary<string, string> input = new Dictionary<string, string>();
             #region 接收表单参数
             var Request = context.Request;
@@ -125,18 +152,29 @@ namespace Microsoft.AspNetCore
                 {
                     if (Request.Method == "POST")
                     {
-                        foreach (string k in Request.Form.Keys)
+                        if (Request.HasFormContentType)
                         {
-                            input.Add(k, Request.Form[k]);
-                        }
-                        foreach (IFormFile file in Request.Form.Files)
-                        {
-                            var fileName = file.Name;
-                            if (string.IsNullOrWhiteSpace(fileName))
+                            foreach (string k in Request.Form.Keys)
                             {
-                                fileName = file.FileName;
+                                input.Add(k, Request.Form[k]);
                             }
-                            input.TryAdd(fileName, file.ToBase64());
+                            foreach (IFormFile file in Request.Form.Files)
+                            {
+                                var fileName = file.Name;
+                                if (string.IsNullOrWhiteSpace(fileName))
+                                {
+                                    fileName = file.FileName;
+                                }
+                                input.TryAdd(fileName, file.ToBase64());
+                            }
+                        }
+                        else
+                        {
+                            #region 接收Body
+                            var reader = new StreamReader(Request.Body);
+                            var contentFromBody = await reader.ReadToEndAsync();
+                            input.TryAdd("body", contentFromBody);
+                            #endregion
                         }
                     }
                 }
@@ -146,30 +184,13 @@ namespace Microsoft.AspNetCore
                     {
                         if (!input.ContainsKey(k))
                         {
-                            input.Add(k, Request.Query[k]);
+                            input.TryAdd(k, Request.Query[k]);
                         }
                     }
                 }
             }
             #endregion
-            #region 限流
-            if (rateLimitStrategy!=null&&!rateLimitStrategy.Request(context))
-            {
-                context.Response.StatusCode = 429;
-                Dictionary<string, object> rlt = new Dictionary<string, object>();
-                rlt.Add("status", false);
-                rlt.Add("msg", "Trigger current limiting.");
-                rlt.Add("output", null);
-                rlt.Add("outputData", 429);
-                var rltExec = System.Text.Encoding.UTF8.GetString(rlt.ExecuteResult());
-                input.TryAdd("TraceId", Guid.NewGuid().ToString());
-                input.TryAdd("GlobalTraceId", Guid.NewGuid().ToString());
-                input.TryAdd("AppName", gatewayConfig.AppName);
-                input.TryAdd("AppNameTarget", gatewayConfig.AppName);
-                TracePool.EnQueue(TracePool.CreateTrance(input), FailMessage("Trigger current limiting.", false));
-                return context.Response.WriteAsync(rltExec);
-            }
-            #endregion
+
             #region 处理
             ActionResult actionResult = null;
             try
@@ -211,7 +232,7 @@ namespace Microsoft.AspNetCore
             rltd.Add("outputData", actionResult.OutputData);
             #endregion
             #endregion
-            return context.Response.WriteAsync(System.Text.Encoding.UTF8.GetString(rltd.ExecuteResult()));
+            await context.Response.WriteAsync(System.Text.Encoding.UTF8.GetString(rltd.ExecuteResult()));
         }
 
         #region 工具

@@ -15,21 +15,34 @@ namespace Microsoft.AspNetCore
         {
             string nickName = string.Empty;
             var Request = context.Request;
-            //var headers = Request.Headers;
-            //过滤服务的条件参数，可以根据业务自己定义
-            string city = Request.Query["city"];
-            var services = Anno.Rpc.Client.Connector.Micros;
-            if (!string.IsNullOrEmpty(city) && services != null)
+            if (Request.Query.ContainsKey("city"))
             {
-                var service = services.FirstOrDefault(s => s.Mi.Nickname.Contains(city));
+                //var headers = Request.Headers;
+                //过滤服务的条件参数，可以根据业务自己定义
+                string city = Request.Query["city"];
+                var services = Anno.Rpc.Client.Connector.Micros;
+                if (!string.IsNullOrEmpty(city) && services != null)
+                {
+                    var service = services.FirstOrDefault(s => s.Mi.Nickname.Contains(city));
+                    if (service != null)
+                    {
+                        nickName = service.Mi.Nickname;
+                    }
+                }
+#if DEBUG
+                Console.WriteLine($"city:{city},Route:{nickName}.");
+#endif
+            }
+            else
+            {
+                var routeValues = context.Request.RouteValues;
+                routeValues.TryGetValue("channel", out object channel);
+                var service = Anno.Rpc.Client.Connector.Micros?.FirstOrDefault(s => s.Tags.Contains(channel));
                 if (service != null)
                 {
                     nickName = service.Mi.Nickname;
                 }
             }
-#if DEBUG
-            Console.WriteLine($"city:{city},Route:{nickName}.");
-#endif
             return nickName;
         }
     }
