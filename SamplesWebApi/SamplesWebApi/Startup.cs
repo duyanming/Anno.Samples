@@ -34,16 +34,18 @@ namespace SamplesWebApi
             services.AddSingleton(_annoConfig);
             #endregion
             #region 注册接口代理
-            var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();
+           /* var helloAnnoService = AnnoProxyBuilder.GetService<IHelloAnnoService>();
             services.AddSingleton(helloAnnoService);
 
 
             var currentLimitingService = AnnoProxyBuilder.GetService<ICurrentLimitingService>();
             services.AddSingleton(currentLimitingService);
 
-
+           
             var nonstandardService = AnnoProxyBuilder.GetService<INonstandardService>();
-            services.AddSingleton(nonstandardService);
+            services.AddSingleton(nonstandardService);*/
+
+            AnnoProxyBuilder.InjectAnnoContainer(System.Reflection.Assembly.GetExecutingAssembly(),services);
             #endregion
 
             services.AddControllers();
