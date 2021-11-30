@@ -17,12 +17,15 @@ namespace SamplesWebApi.Controllers
 
         private readonly IHelloAnnoService _helloAnnoService;
 
-        public AnnoController(ILogger<AnnoController> logger, AnnoConfig annoConfig, IHelloAnnoService helloAnnoService)
+        private readonly INonstandardService _nonstandardService;
+
+        public AnnoController(ILogger<AnnoController> logger, AnnoConfig annoConfig, IHelloAnnoService helloAnnoService, INonstandardService nonstandardService)
         {
             _logger = logger;
             _annoConfig = annoConfig;
 
             _helloAnnoService = helloAnnoService;
+            _nonstandardService = nonstandardService;
         }
         [HttpGet]
         public dynamic Index()
@@ -81,6 +84,18 @@ namespace SamplesWebApi.Controllers
         public string GoodByeAlias(string name)
         {
             return _helloAnnoService.GoodByeAlias(name);
+        }
+
+        /// <summary>
+        /// NonstandardServiceSayHi
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [HttpPost]
+        public string NonstandardServiceSayHi(string name)
+        {
+            return _nonstandardService.SayHi(name);
         }
     }
 }

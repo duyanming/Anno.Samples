@@ -40,6 +40,10 @@ namespace SamplesWebApi
 
             var currentLimitingService = AnnoProxyBuilder.GetService<ICurrentLimitingService>();
             services.AddSingleton(currentLimitingService);
+
+
+            var nonstandardService = AnnoProxyBuilder.GetService<INonstandardService>();
+            services.AddSingleton(nonstandardService);
             #endregion
 
             services.AddControllers();
