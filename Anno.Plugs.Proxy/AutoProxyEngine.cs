@@ -13,27 +13,25 @@ using Anno.Plugs.Proxy.Common;
 using Anno.EngineData;
 
 using Newtonsoft.Json.Linq;
+using Anno.Const;
 
 namespace Anno.Plugs.Proxy
 {
     /// <summary>
     /// 自动代理引擎
     /// </summary>
-   public class AutoProxyEngine
+    public class AutoProxyEngine
     {
         private static readonly Dictionary<Type, string> _builtInTypeNames = new Dictionary<Type, string>
         {
             { typeof(bool), "bool" },
-            { typeof(bool?), "bool?" },
             { typeof(byte), "byte" },
             { typeof(char), "char" },
             { typeof(decimal), "decimal" },
             { typeof(double), "double" },
             { typeof(float), "float" },
             { typeof(int), "int" },
-            { typeof(int?), "int?" },
             { typeof(long), "long" },
-            { typeof(long?), "long?" },
             { typeof(object), "object" },
             { typeof(sbyte), "sbyte" },
             { typeof(short), "short" },
@@ -41,7 +39,7 @@ namespace Anno.Plugs.Proxy
             { typeof(uint), "uint" },
             { typeof(ulong), "ulong" },
             { typeof(ushort), "ushort" },
-            { typeof(void), "void" }
+            { typeof(void), "void" },
         };
 
         /// <summary>
@@ -85,7 +83,7 @@ namespace Anno.Plugs.Proxy
         /// <param name="assemblies"></param>
         private static void CreateProxyFile(List<Dictionary<Type, List<MethodInfo>>> assemblies)
         {
-            var filePath = "\\Proxy";
+            var filePath = $"D:\\" + CustomConfiguration.Settings["ProxyPath"];
             foreach (var assembly in assemblies)
             {
                 var interafes = new List<string>();
@@ -229,7 +227,7 @@ namespace Anno.Plugs.Proxy
                 {
                     returnName = outPutArgs.Name;
                 }
-                contentSb.AppendLine($"{" ",8}{returnName} {method.Name} ({string.Join(",", inputArgs.Select(d => $"{GetTypeName(d.ParameterType)} {d.Name}"))});");
+                contentSb.AppendLine($"{" ",8}{returnName} {method.Name}({string.Join(",", inputArgs.Select(d => $"{GetTypeName(d.ParameterType)} {d.Name}"))});");
                 if (item.Value.Count > 1)
                 {
                     contentSb.AppendLine();
@@ -347,7 +345,7 @@ namespace Anno.Plugs.Proxy
                         argusings.Add(property.PropertyType.Namespace);
                     if (property.PropertyType.IsEnum || property.PropertyType.IsGenericType || !property.PropertyType.Module.Name.StartsWith("System."))
                     {
-                        CreateClassFile(method, property.PropertyType, typePath, argusings);
+                        CreateClassFile(method, property.PropertyType.IsNullableType() ? property.PropertyType.GenericTypeArguments[0] : property.PropertyType, typePath, argusings);
                     }
                     contentSb.AppendLine($"{" ",8}{(argType.IsInterface ? "" : "public ")}{GetTypeName(property.PropertyType)} {property.Name} " + "{ get; set; }");
                 }
@@ -386,10 +384,22 @@ namespace Anno.Plugs.Proxy
 
         private static string GetTypeName(Type type)
         {
+            var typeName = type.Name;
             if (_builtInTypeNames.ContainsKey(type))
-                return _builtInTypeNames[type];
+                typeName = _builtInTypeNames[type];
             else
-                return type.Name;
+            {
+                if (type.IsNullableType())
+                {
+                    if (_builtInTypeNames.ContainsKey(type.GenericTypeArguments[0]))
+                        typeName = _builtInTypeNames[type.GenericTypeArguments[0]];
+                    else
+                        typeName = type.GenericTypeArguments[0].Name;
+                }
+            }
+            if (type.IsNullableType())
+                typeName += "?";
+            return typeName;
         }
     }
 }
