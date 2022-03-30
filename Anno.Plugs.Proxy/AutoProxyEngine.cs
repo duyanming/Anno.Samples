@@ -48,6 +48,10 @@ namespace Anno.Plugs.Proxy
         /// <param name="prefix">程序集前缀，默认为 Anno.Plugs. </param>
         public static void Create(string prefix = "Anno.Plugs.")
         {
+#if !DEBUG
+            Log.Log.Warn("AutoProxyEngine.Create仅支持DEBUG环境下编译生成", typeof(AutoProxyEngine));
+            return;
+#endif
             var assemblies = AssemblyHelper.Load(d => d.Name.StartsWith(prefix));
 
             var proxys = new List<Dictionary<Type, List<MethodInfo>>>();
@@ -87,7 +91,7 @@ namespace Anno.Plugs.Proxy
             foreach (var assembly in assemblies)
             {
                 var interafes = new List<string>();
-                var dllPath = Path.Combine(filePath, $"{assembly.First().Key.Namespace}");
+                var dllPath = Path.Combine(filePath, $"{assembly.First().Key.Namespace.Replace("Plugs", "Proxy")}");
 
                 foreach (var item in assembly)
                 {
@@ -120,7 +124,7 @@ namespace Anno.Plugs.Proxy
             csprojSb.AppendLine();
             csprojSb.AppendLine("</Project>");
 
-            FileHelper.Write(Path.Combine(dllPath, $"{type.Namespace}.csproj"), csprojSb.ToString());
+            FileHelper.Write(Path.Combine(dllPath, $"{type.Namespace.Replace("Plugs", "Proxy")}.csproj"), csprojSb.ToString());
         }
 
         private static void CreateBootstrap(string dllPath, Type type, List<string> interfaces)
@@ -166,7 +170,7 @@ namespace Anno.Plugs.Proxy
             WriteUsing(argusings, classSb);
 
             classSb.AppendLine();
-            classSb.AppendLine($"namespace {type.Namespace}");
+            classSb.AppendLine($"namespace {type.Namespace.Replace("Plugs", "Proxy")}");
             classSb.AppendLine("{");
             classSb.AppendLine($"{" ",4}public class Bootstrap : IPlugsConfigurationBootstrap");
             classSb.AppendLine($"{" ",4}" + "{");
@@ -186,7 +190,7 @@ namespace Anno.Plugs.Proxy
             var classSb = new StringBuilder();
             var usings = new List<string>() { "Anno.Rpc.Client.DynamicProxy" };
             var contentSb = new StringBuilder();
-            var interfaceName = $"I{item.Key.Name.Replace("Module", "Service")}";
+            var interfaceName = $"I{item.Key.Name.Replace("Plugs", "Proxy").Replace("Module", "Service")}";
             foreach (var method in item.Value)
             {
                 var inputArgs = method.GetParameters();
@@ -238,7 +242,7 @@ namespace Anno.Plugs.Proxy
             WriteUsing(usings, classSb);
 
             classSb.AppendLine();
-            classSb.AppendLine($"namespace {item.Key.Namespace}");
+            classSb.AppendLine($"namespace {item.Key.Namespace.Replace("Plugs", "Proxy")}");
             classSb.AppendLine("{");
             classSb.AppendLine($"{" ",4}[AnnoProxy(Channel = \"{item.Key.Namespace.Replace("Service", "")}\", Router = \"{item.Key.Name.Replace("Module", "")}\")]");
             classSb.AppendLine($"{" ",4}public interface {interfaceName}");
@@ -259,29 +263,32 @@ namespace Anno.Plugs.Proxy
         private static void FilterArgs(string path, MethodInfo method, List<string> usings)
         {
 
-            var inputDtoPath = Path.Combine(path, "Inputs");
-            var outputDtoPath = Path.Combine(path, "Outputs");
+            var dtoPath = Path.Combine(path, "Dtos");
 
-            var inputArgs = method.GetParameters();
+            var argTypes = method.GetParameters().Select(d => d.ParameterType).ToList();
+            argTypes.Add(method.ReturnType);
 
-            var outPutArgs = method.ReturnType;
+            var types = GetMethodArgs(argTypes);
 
-            var isTask = method.ReturnType.IsAssignableTo(typeof(Task));
-            //判断是否返回类型为Task或Task<TResult>
-            if (isTask || method.ReturnType.IsGenericType)
+            types.ForEach(f =>
             {
-                outPutArgs = method.ReturnType.GenericTypeArguments[0];
-            }
-
-            if (!outPutArgs.IsAssignableTo(typeof(IActionResult)) && !outPutArgs.IsGenericType)
-            {
-                CreateClassFile(method, outPutArgs, outputDtoPath, usings);
-            }
-
-            inputArgs.ForEach(f =>
-            {
-                CreateClassFile(method, f.ParameterType, inputDtoPath, usings);
+                CreateClassFile(method, f, dtoPath, usings);
             });
+        }
+
+        private static List<Type> GetMethodArgs(List<Type> list)
+        {
+            var types = new List<Type>();
+            foreach (var item in list)
+            {
+                if (item.IsGenericType)
+                {
+                    types.AddRange(GetMethodArgs(item.GenericTypeArguments.ToList()));
+                }
+                else
+                    types.Add(item);
+            }
+            return types;
         }
 
         /// <summary>
@@ -293,10 +300,17 @@ namespace Anno.Plugs.Proxy
         /// <param name="usings"></param>
         private static void CreateClassFile(MethodInfo method, Type argType, string typePath, List<string> usings)
         {
+            if (argType.IsAbstract || argType.IsInterface)
+            {
+                var msg = $"warning:方法:{method.DeclaringType.Name}.{method.Name}中的参数类型{argType.Name}非法,请勿使用抽象类或接口";
+                Log.Log.WriteLine(msg, ConsoleColor.Red);
+                throw new Exception(msg);
+            }
+
             if (argType.Module.Name.StartsWith("System.") || argType.Namespace == "Anno.EngineData")
                 return;
 
-            var argsNamespace = $"{method.ReflectedType.Namespace}.{typePath.Split('\\').Last()}";
+            var argsNamespace = $"{method.ReflectedType.Namespace.Replace("Plugs", "Proxy")}.{typePath.Split('\\').Last()}";
 
             if (usings.Contains(argType.Namespace))
             {
@@ -396,6 +410,14 @@ namespace Anno.Plugs.Proxy
                     else
                         typeName = type.GenericTypeArguments[0].Name;
                 }
+                else
+                {
+                    if (type.IsGenericType)
+                    {
+                        typeName = $"{type.Name.Replace($"`{type.GenericTypeArguments.Length}", "")}<{string.Join(", ", type.GenericTypeArguments.Select(d => GetTypeName(d)))}>";
+                    }
+                }
+
             }
             if (type.IsNullableType())
                 typeName += "?";
