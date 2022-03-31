@@ -14,6 +14,7 @@ using Anno.EngineData;
 
 using Newtonsoft.Json.Linq;
 using Anno.Const;
+using Anno.Const.Attribute;
 
 namespace Anno.Plugs.Proxy
 {
@@ -118,7 +119,8 @@ namespace Anno.Plugs.Proxy
             csprojSb.AppendLine();
             csprojSb.AppendLine();
             csprojSb.AppendLine("  <ItemGroup>");
-            csprojSb.AppendLine("    <PackageReference Include=\"Anno.Rpc.Client.DynamicProxy\" Version=\"1.6.0.1\" />");
+            csprojSb.AppendLine("    <PackageReference Include=\"Anno.Rpc.Client.DynamicProxy\" Version=\"1.7.0.1\" />");
+            csprojSb.AppendLine("    <PackageReference Include=\"Anno.Const\" Version=\"1.7.0.1\" />");
             csprojSb.AppendLine("  </ItemGroup>");
             csprojSb.AppendLine();
             csprojSb.AppendLine();
@@ -169,7 +171,6 @@ namespace Anno.Plugs.Proxy
 
             WriteUsing(argusings, classSb);
 
-            classSb.AppendLine();
             classSb.AppendLine($"namespace {type.Namespace.Replace("Plugs", "Proxy")}");
             classSb.AppendLine("{");
             classSb.AppendLine($"{" ",4}public class Bootstrap : IPlugsConfigurationBootstrap");
@@ -188,7 +189,11 @@ namespace Anno.Plugs.Proxy
         private static void CreateInterfaceFile(string dllPath, KeyValuePair<Type, List<MethodInfo>> item, List<string> intefaces)
         {
             var classSb = new StringBuilder();
-            var usings = new List<string>() { "Anno.Rpc.Client.DynamicProxy" };
+            var usings = new List<string>()
+            {
+                "Anno.Rpc.Client.DynamicProxy",
+                "Anno.Const.Attribute",
+            };
             var contentSb = new StringBuilder();
             var interfaceName = $"I{item.Key.Name.Replace("Plugs", "Proxy").Replace("Module", "Service")}";
             foreach (var method in item.Value)
@@ -218,20 +223,20 @@ namespace Anno.Plugs.Proxy
                 });
 
                 //添加接口
-                var returnName = "";
-                if (isTask)
+                var descInfo = method.GetCustomAttribute<AnnoInfoAttribute>();
+                if (descInfo != null)
                 {
-                    returnName = $"Task<{outPutArgs.GenericTypeArguments[0].Name}>";
+                    contentSb.AppendLine($"{" ",8}/// <summary>");
+                    contentSb.AppendLine($"{" ",8}/// {descInfo.Desc}");
+                    contentSb.AppendLine($"{" ",8}/// </summary>");
+                    inputArgs?.ForEach(f =>
+                    {
+                        contentSb.AppendLine($"{" ",8}/// <param name=\"{f.Name}\"></param>");
+                    });
+                    contentSb.AppendLine($"{" ",8}/// <returns></returns>");
+                    contentSb.AppendLine($"{" ",8}[AnnoInfo(Desc = \"{descInfo.Desc}\")]");
                 }
-                else if (outPutArgs.IsGenericType)
-                {
-                    returnName = $"{outPutArgs.Name.Replace("`1", "")}<{outPutArgs.GenericTypeArguments[0].Name}>";
-                }
-                else
-                {
-                    returnName = outPutArgs.Name;
-                }
-                contentSb.AppendLine($"{" ",8}{returnName} {method.Name}({string.Join(",", inputArgs.Select(d => $"{GetTypeName(d.ParameterType)} {d.Name}"))});");
+                contentSb.AppendLine($"{" ",8}{GetTypeName(outPutArgs)} {method.Name}({string.Join(",", inputArgs.Select(d => $"{GetTypeName(d.ParameterType)} {d.Name}"))});");
                 if (item.Value.Count > 1)
                 {
                     contentSb.AppendLine();
@@ -241,7 +246,6 @@ namespace Anno.Plugs.Proxy
 
             WriteUsing(usings, classSb);
 
-            classSb.AppendLine();
             classSb.AppendLine($"namespace {item.Key.Namespace.Replace("Plugs", "Proxy")}");
             classSb.AppendLine("{");
             classSb.AppendLine($"{" ",4}[AnnoProxy(Channel = \"{item.Key.Namespace.Replace("Service", "")}\", Router = \"{item.Key.Name.Replace("Module", "")}\")]");
@@ -300,15 +304,15 @@ namespace Anno.Plugs.Proxy
         /// <param name="usings"></param>
         private static void CreateClassFile(MethodInfo method, Type argType, string typePath, List<string> usings)
         {
+            if (argType.Module.Name.StartsWith("System.") || argType.Namespace == "Anno.EngineData")
+                return;
+
             if (argType.IsAbstract || argType.IsInterface)
             {
                 var msg = $"warning:方法:{method.DeclaringType.Name}.{method.Name}中的参数类型{argType.Name}非法,请勿使用抽象类或接口";
                 Log.Log.WriteLine(msg, ConsoleColor.Red);
                 throw new Exception(msg);
             }
-
-            if (argType.Module.Name.StartsWith("System.") || argType.Namespace == "Anno.EngineData")
-                return;
 
             var argsNamespace = $"{method.ReflectedType.Namespace.Replace("Plugs", "Proxy")}.{typePath.Split('\\').Last()}";
 
@@ -351,6 +355,25 @@ namespace Anno.Plugs.Proxy
                     contentSb.AppendLine($"{" ",8}{field.Name} = {field.GetValue(argType).ToInt()},");
                 }
             }
+            else if (argType.IsSubclassOfGeneric(typeof(Dictionary<,>)))
+            {
+                if (!argusings.Contains(argType.BaseType.Namespace))
+                    argusings.Add(argType.BaseType.Namespace);
+                foreach (var type in argType.BaseType.GenericTypeArguments)
+                {
+                    if (type.IsSubclassOfGeneric(typeof(Dictionary<,>)))
+                    {
+                        if (!argusings.Contains(type.BaseType.Namespace))
+                            argusings.Add(type.BaseType.Namespace);
+                    }
+                    else
+                    {
+                        if (!argusings.Contains(type.Namespace))
+                            argusings.Add(type.Namespace);
+                    }
+                    CreateClassFile(method, type.IsNullableType() ? type.GenericTypeArguments[0] : type, typePath, argusings);
+                }
+            }
             else
             {
                 foreach (var property in argType.GetProperties())
@@ -359,7 +382,17 @@ namespace Anno.Plugs.Proxy
                         argusings.Add(property.PropertyType.Namespace);
                     if (property.PropertyType.IsEnum || property.PropertyType.IsGenericType || !property.PropertyType.Module.Name.StartsWith("System."))
                     {
-                        CreateClassFile(method, property.PropertyType.IsNullableType() ? property.PropertyType.GenericTypeArguments[0] : property.PropertyType, typePath, argusings);
+                        if (property.PropertyType.IsGenericType)
+                        {
+                            property.PropertyType.GenericTypeArguments.ForEach(f =>
+                            {
+                                CreateClassFile(method, f, typePath, argusings);
+                            });
+                        }
+                        else
+                        {
+                            CreateClassFile(method, property.PropertyType.IsNullableType() ? property.PropertyType.GenericTypeArguments[0] : property.PropertyType, typePath, argusings);
+                        }
                     }
                     contentSb.AppendLine($"{" ",8}{(argType.IsInterface ? "" : "public ")}{GetTypeName(property.PropertyType)} {property.Name} " + "{ get; set; }");
                 }
@@ -367,10 +400,14 @@ namespace Anno.Plugs.Proxy
 
             WriteUsing(argusings, classSb);
 
-            classSb.AppendLine();
             classSb.AppendLine($"namespace {argsNamespace}");
             classSb.AppendLine("{");
-            classSb.AppendLine($"{" ",4}public {classType} {argType.Name}");
+            if (argType.IsSubclassOfGeneric(typeof(Dictionary<,>)))
+            {
+                classSb.AppendLine($"{" ",4}public {classType} {argType.Name} : {GetTypeName(argType.BaseType)}");
+            }
+            else
+                classSb.AppendLine($"{" ",4}public {classType} {argType.Name}");
             classSb.AppendLine($"{" ",4}" + "{");
             classSb.AppendLine(contentSb.ToString());
             classSb.AppendLine($"{" ",4}" + "}");

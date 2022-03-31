@@ -80,5 +80,25 @@ namespace Anno.Plugs.Proxy.Common
         {
             return ((type != null) && type.IsGenericType) && (type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
+
+        /// <summary>
+        /// 判断是否继承自指定的泛型
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="generic"></param>
+        /// <returns></returns>
+        public static bool IsSubclassOfGeneric(this Type type, Type generic)
+        {
+            while (type != null && type != typeof(object))
+            {
+                var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                if (generic == cur)
+                {
+                    return true;
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
     }
 }
