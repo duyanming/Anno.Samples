@@ -189,13 +189,13 @@ namespace Anno.Plugs.Proxy
         private static void CreateInterfaceFile(string dllPath, KeyValuePair<Type, List<MethodInfo>> item, List<string> intefaces)
         {
             var classSb = new StringBuilder();
+            var contentSb = new StringBuilder();
+            var interfaceName = $"I{item.Key.Name.Replace("Plugs", "Proxy").Replace("Module", "Service")}";
             var usings = new List<string>()
             {
                 "Anno.Rpc.Client.DynamicProxy",
                 "Anno.Const.Attribute",
             };
-            var contentSb = new StringBuilder();
-            var interfaceName = $"I{item.Key.Name.Replace("Plugs", "Proxy").Replace("Module", "Service")}";
             foreach (var method in item.Value)
             {
                 var inputArgs = method.GetParameters();
@@ -315,11 +315,10 @@ namespace Anno.Plugs.Proxy
             }
 
             var argsNamespace = $"{method.ReflectedType.Namespace.Replace("Plugs", "Proxy")}.{typePath.Split('\\').Last()}";
-
+            usings.Add($"{argsNamespace}");
             if (usings.Contains(argType.Namespace))
             {
                 usings.Remove(argType.Namespace);
-                usings.Add($"{argsNamespace}");
             }
             var classSb = new StringBuilder();
             var argusings = new List<string>();
